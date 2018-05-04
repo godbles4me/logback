@@ -82,6 +82,7 @@ public abstract class AbstractSocketAppender<E> extends AppenderBase<E> implemen
     private int acceptConnectionTimeout = DEFAULT_ACCEPT_CONNECTION_DELAY;
     private Duration eventDelayLimit = new Duration(DEFAULT_EVENT_DELAY_TIMEOUT);
 
+    // 阻塞双端队列
     private BlockingDeque<E> deque;
     private String peerId;
     private SocketConnector connector;
@@ -107,9 +108,11 @@ public abstract class AbstractSocketAppender<E> extends AppenderBase<E> implemen
     /**
      * {@inheritDoc}
      */
+    @Override
     public void start() {
-        if (isStarted())
+        if (isStarted()) {
             return;
+        }
         int errorCount = 0;
         if (port <= 0) {
             errorCount++;
@@ -171,8 +174,9 @@ public abstract class AbstractSocketAppender<E> extends AppenderBase<E> implemen
      */
     @Override
     protected void append(E event) {
-        if (event == null || !isStarted())
+        if (event == null || !isStarted()) {
             return;
+        }
 
         try {
             final boolean inserted = deque.offer(event, eventDelayLimit.getMilliseconds(), TimeUnit.MILLISECONDS);

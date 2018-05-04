@@ -16,14 +16,15 @@ package ch.qos.logback.classic.pattern;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 /**
- * Return the event's formatted message.
+ * 获取日志事件的格式化消息.
  * 
  * @author Ceki G&uuml;lc&uuml;
+ * @author Daniel Lea
  */
 public class MessageConverter extends ClassicConverter {
 
     @Override
-    public String convert(ILoggingEvent event) {
+    public String convert(final ILoggingEvent event) {
         return event.getFormattedMessage();
     }
 

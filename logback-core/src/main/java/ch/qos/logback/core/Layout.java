@@ -16,6 +16,16 @@ package ch.qos.logback.core;
 import ch.qos.logback.core.spi.ContextAware;
 import ch.qos.logback.core.spi.LifeCycle;
 
+/**
+ * 在0.9.19版本以前,Appender会委托Layout实现具体任务:
+ * 1. 转换输入事件(event)为字符串;
+ * 2. 将字节数组输出到指定目的地.
+ *
+ * 但在0.9.19版本之后,Layout仅具有转换输入事件为字符串功能,
+ * 不再具有写文件功能.
+ *
+ * @param <E>
+ */
 public interface Layout<E> extends ContextAware, LifeCycle {
 
     /**

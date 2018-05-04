@@ -33,6 +33,7 @@ class Token {
 
     static Token EOF_TOKEN = new Token(EOF, "EOF");
     static Token RIGHT_PARENTHESIS_TOKEN = new Token(RIGHT_PARENTHESIS);
+    /** 基本组合关键字TOKEN */
     static Token BARE_COMPOSITE_KEYWORD_TOKEN = new Token(COMPOSITE_KEYWORD, "BARE");
     static Token PERCENT_TOKEN = new Token(PERCENT);
 
@@ -56,6 +57,7 @@ class Token {
         return value;
     }
 
+    @Override
     public String toString() {
         String typeStr = null;
         switch (type) {
@@ -92,6 +94,7 @@ class Token {
         }
     }
 
+    @Override
     public int hashCode() {
         int result;
         result = type;
@@ -99,18 +102,22 @@ class Token {
         return result;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof Token))
+        }
+        if (!(o instanceof Token)) {
             return false;
-
+        }
         final Token token = (Token) o;
 
-        if (type != token.type)
+        if (type != token.type) {
             return false;
-        if (value != null ? !value.equals(token.value) : token.value != null)
+        }
+        if (value != null ? !value.equals(token.value) : token.value != null) {
             return false;
+        }
 
         return true;
     }

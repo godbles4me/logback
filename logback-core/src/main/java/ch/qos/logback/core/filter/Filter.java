@@ -18,18 +18,13 @@ import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.spi.LifeCycle;
 
 /**
- * Users should extend this class to implement customized event filtering.
- * 
- * <p>We suggest that you first try to use the built-in rules before rushing to
- * write your own custom filters.
- * 
- * <p>For more information about filters, please refer to the online manual at
- * http://logback.qos.ch/manual/filters.html
+ * 用户应继承该类来实现自定义事件过滤.
  * 
  * @author Ceki G&uuml;lc&uuml;
  */
 public abstract class Filter<E> extends ContextAwareBase implements LifeCycle {
 
+    // 过滤器名称
     private String name;
 
     boolean start = false;

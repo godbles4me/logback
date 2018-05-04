@@ -47,6 +47,7 @@ public abstract class NamedConverter extends ClassicConverter {
 
     @Override
     public String convert(ILoggingEvent event) {
+        // 获取事件Logger的完全限定名
         String fqn = getFullyQualifiedName(event);
 
         if (abbreviator == null) {

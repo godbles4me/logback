@@ -46,6 +46,7 @@ public class SyslogAppender extends SyslogAppenderBase<ILoggingEvent> {
 
     boolean throwableExcluded = false;
 
+    @Override
     public void start() {
         super.start();
         setupStackTraceLayout();
@@ -72,16 +73,23 @@ public class SyslogAppender extends SyslogAppenderBase<ILoggingEvent> {
         return LevelToSyslogSeverity.convert(event);
     }
 
+    /**
+     * 后处理
+     * @param eventObject
+     * @param sw
+     */
     @Override
     protected void postProcess(Object eventObject, OutputStream sw) {
-        if (throwableExcluded)
+        if (throwableExcluded) {
             return;
+        }
 
         ILoggingEvent event = (ILoggingEvent) eventObject;
         IThrowableProxy tp = event.getThrowableProxy();
 
-        if (tp == null)
+        if (tp == null) {
             return;
+        }
 
         String stackTracePrefix = stackTraceLayout.doLayout(event);
         boolean isRootException = true;
@@ -93,6 +101,7 @@ public class SyslogAppender extends SyslogAppenderBase<ILoggingEvent> {
                 for (StackTraceElementProxy step : stepArray) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(stackTracePrefix).append(step);
+                    // 日志同步输出到输出流,并刷新缓冲区
                     sw.write(sb.toString().getBytes());
                     sw.flush();
                 }

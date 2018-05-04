@@ -17,7 +17,7 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 
 /**
- * 模式布局编码器基本类
+ * 模式布局编码器基本类(常用)
  * @author Daniel Lea
  * @param <E>
  */

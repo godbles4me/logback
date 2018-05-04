@@ -25,60 +25,67 @@ import ch.qos.logback.core.pattern.color.*;
 import ch.qos.logback.core.pattern.parser.Parser;
 
 /**
- * <p>
- * A flexible layout configurable with pattern string. The goal of this class is
- * to {@link #format format} a {@link ILoggingEvent} and return the results in a
- * {#link String}. The format of the result depends on the
- * <em>conversion pattern</em>.
- * <p>
- * For more information about this layout, please refer to the online manual at
- * http://logback.qos.ch/manual/layouts.html#PatternLayout
- * 
+ * 使用模式字符串实现灵活的布局配置. 该类用于格式化日志事件{@link ILoggingEvent},
+ * 并返回一个字符串. 格式化结果依赖于conversion pattern(默认模式).
+ *
+ * @author Daniel Lea
  */
-
 public class PatternLayout extends PatternLayoutBase<ILoggingEvent> {
 
-    public static final Map<String, String> defaultConverterMap = new HashMap<String, String>();
+    /** 默认转换器 */
+    public static final Map<String, String> defaultConverterMap = new HashMap<>();
+    /** 头部前缀 */
     public static final String HEADER_PREFIX = "#logback.classic pattern: ";
 
     static {
         defaultConverterMap.putAll(Parser.DEFAULT_COMPOSITE_CONVERTER_MAP);
 
+        // 日志日期
         defaultConverterMap.put("d", DateConverter.class.getName());
         defaultConverterMap.put("date", DateConverter.class.getName());
 
+        // 日志相对时间
         defaultConverterMap.put("r", RelativeTimeConverter.class.getName());
         defaultConverterMap.put("relative", RelativeTimeConverter.class.getName());
 
+        // 日志级别
         defaultConverterMap.put("level", LevelConverter.class.getName());
         defaultConverterMap.put("le", LevelConverter.class.getName());
         defaultConverterMap.put("p", LevelConverter.class.getName());
 
+        // 当前线程
         defaultConverterMap.put("t", ThreadConverter.class.getName());
         defaultConverterMap.put("thread", ThreadConverter.class.getName());
 
+        // 日志器名称
         defaultConverterMap.put("lo", LoggerConverter.class.getName());
         defaultConverterMap.put("logger", LoggerConverter.class.getName());
         defaultConverterMap.put("c", LoggerConverter.class.getName());
 
+        // 日志消息
         defaultConverterMap.put("m", MessageConverter.class.getName());
         defaultConverterMap.put("msg", MessageConverter.class.getName());
         defaultConverterMap.put("message", MessageConverter.class.getName());
 
+        // 日志调用者类信息
         defaultConverterMap.put("C", ClassOfCallerConverter.class.getName());
         defaultConverterMap.put("class", ClassOfCallerConverter.class.getName());
 
+        // 日志调用者方法信息
         defaultConverterMap.put("M", MethodOfCallerConverter.class.getName());
         defaultConverterMap.put("method", MethodOfCallerConverter.class.getName());
 
+        // 日志调用者代码行信息
         defaultConverterMap.put("L", LineOfCallerConverter.class.getName());
         defaultConverterMap.put("line", LineOfCallerConverter.class.getName());
 
+        // 日志调用者文件信息
         defaultConverterMap.put("F", FileOfCallerConverter.class.getName());
         defaultConverterMap.put("file", FileOfCallerConverter.class.getName());
 
         defaultConverterMap.put("X", MDCConverter.class.getName());
         defaultConverterMap.put("mdc", MDCConverter.class.getName());
+
 
         defaultConverterMap.put("ex", ThrowableProxyConverter.class.getName());
         defaultConverterMap.put("exception", ThrowableProxyConverter.class.getName());
@@ -93,17 +100,23 @@ public class PatternLayout extends PatternLayoutBase<ILoggingEvent> {
         defaultConverterMap.put("nopex", NopThrowableInformationConverter.class.getName());
         defaultConverterMap.put("nopexception", NopThrowableInformationConverter.class.getName());
 
+        //
         defaultConverterMap.put("cn", ContextNameConverter.class.getName());
         defaultConverterMap.put("contextName", ContextNameConverter.class.getName());
 
+        // 调用者数据
         defaultConverterMap.put("caller", CallerDataConverter.class.getName());
 
+        // 标记
         defaultConverterMap.put("marker", MarkerConverter.class.getName());
 
+        // 属性
         defaultConverterMap.put("property", PropertyConverter.class.getName());
 
+        // 行分隔符
         defaultConverterMap.put("n", LineSeparatorConverter.class.getName());
 
+        // 颜色以及高亮
         defaultConverterMap.put("black", BlackCompositeConverter.class.getName());
         defaultConverterMap.put("red", RedCompositeConverter.class.getName());
         defaultConverterMap.put("green", GreenCompositeConverter.class.getName());
@@ -122,6 +135,7 @@ public class PatternLayout extends PatternLayoutBase<ILoggingEvent> {
         defaultConverterMap.put("boldWhite", BoldWhiteCompositeConverter.class.getName());
         defaultConverterMap.put("highlight", HighlightingCompositeConverter.class.getName());
 
+        // 本地序列号
         defaultConverterMap.put("lsn", LocalSequenceNumberConverter.class.getName());
 
     }

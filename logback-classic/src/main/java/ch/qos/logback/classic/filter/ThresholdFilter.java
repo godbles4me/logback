@@ -34,7 +34,8 @@ import ch.qos.logback.core.spi.FilterReply;
  */
 public class ThresholdFilter extends Filter<ILoggingEvent> {
 
-    Level level;
+    // 日志级别
+    private Level level;
 
     @Override
     public FilterReply decide(ILoggingEvent event) {

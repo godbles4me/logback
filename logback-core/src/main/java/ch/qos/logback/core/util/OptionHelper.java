@@ -74,19 +74,6 @@ public class OptionHelper {
      * Find the value corresponding to <code>key</code> in <code>props</code>.
      * Then perform variable substitution on the found value.
      */
-    // public static String findAndSubst(String key, Properties props) {
-    // String value = props.getProperty(key);
-    //
-    // if (value == null) {
-    // return null;
-    // }
-    //
-    // try {
-    // return substVars(value, props);
-    // } catch (IllegalArgumentException e) {
-    // return value;
-    // }
-    // }
     final static String DELIM_START = "${";
     final static char DELIM_STOP = '}';
     final static String DELIM_DEFAULT = ":-";

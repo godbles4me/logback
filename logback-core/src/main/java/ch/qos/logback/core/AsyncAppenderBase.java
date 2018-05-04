@@ -42,19 +42,24 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
     AppenderAttachableImpl<E> aai = new AppenderAttachableImpl<E>();
 
     /** 默认队列缓存大小 256MB */
-    public static final int DEFAULT_QUEUE_SIZE = 256;
+    public static final int             DEFAULT_QUEUE_SIZE          = 256;
+    /** 默认最大刷盘时间 1S    */
+    public static final int             DEFAULT_MAX_FLUSH_TIME      = 1000;
 
     // 阻塞队列
     BlockingQueue<E> blockingQueue;
     // 队列长度
     int queueSize = DEFAULT_QUEUE_SIZE;
 
+    // appender计数器
     int appenderCount = 0;
 
-    static final int UNDEFINED = -1;
-    int discardingThreshold = UNDEFINED;
-    boolean neverBlock = false;
+    private static final int            UNDEFINED                   = -1;
+    // 丢弃消息阈值, 默认未定义
+    private int                         discardingThreshold         = UNDEFINED;
+    private boolean                     neverBlock                  = false;
 
+    // 日志拉取线程
     Worker worker = new Worker();
 
     /**
@@ -62,8 +67,8 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
      * worker takes longer than this time it will exit, discarding any remaining 
      * items in the queue
      */
-    public static final int DEFAULT_MAX_FLUSH_TIME = 1000;
-    int maxFlushTime = DEFAULT_MAX_FLUSH_TIME;
+    // 默认在appender停止后,默认最大队列刷盘时间. 工作线程超时则退出,并丢弃队列中该消息
+    private int                         maxFlushTime                = DEFAULT_MAX_FLUSH_TIME;
 
     /**
      * Is the eventObject passed as parameter discardable? The base class's implementation of this method always returns
@@ -80,10 +85,10 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
     }
 
     /**
-     * Pre-process the event prior to queueing. The base class does no pre-processing but sub-classes can
-     * override this behavior.
+     * 日志入队操作前预处理.
+     * 基本类不进行预处理,由子类覆写该方法提供具体预处理实现.
      *
-     * @param eventObject
+     * @param eventObject 事件对象
      */
     protected void preprocess(E eventObject) {
     }
@@ -103,11 +108,13 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
         }
         blockingQueue = new ArrayBlockingQueue<E>(queueSize);
 
-        // 消息丢弃阈值: 未定义时, 默认为队列长度的1/5
+        // 消息丢弃阈值: 未定义时, 默认为队列长度只剩20%时丢弃
         if (discardingThreshold == UNDEFINED) {
             discardingThreshold = queueSize / 5;
         }
         addInfo("Setting discardingThreshold to " + discardingThreshold);
+
+        // 后台日志拉取工作线程
         worker.setDaemon(true);
         worker.setName("AsyncAppender-Worker-" + getName());
         // make sure this instance is marked as "started" before staring the worker Thread
@@ -125,8 +132,8 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
         // and sub-appenders consume the interruption
         super.stop();
 
-        // interrupt the worker thread so that it can terminate. Note that the interruption can be consumed
-        // by sub-appenders
+
+        // 中断可被子appender恢复
         worker.interrupt();
 
         InterruptUtil interruptUtil = new InterruptUtil(context);
@@ -161,7 +168,9 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
         if (isQueueBelowDiscardingThreshold() && isDiscardable(eventObject)) {
             return;
         }
+        // 预处理事件对象
         preprocess(eventObject);
+        // 入队操作,
         put(eventObject);
     }
 
@@ -169,6 +178,9 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
         return (blockingQueue.remainingCapacity() < discardingThreshold);
     }
 
+    /**
+     * 日志进入阻塞队列,操作可能中断.
+     */
     private void put(E eventObject) {
         if (neverBlock) {
             blockingQueue.offer(eventObject);
@@ -177,6 +189,9 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
         }
     }
 
+    /**
+     * 日志非中断进入阻塞队列
+     */
     private void putUninterruptibly(E eventObject) {
         boolean interrupted = false;
         try {
@@ -189,6 +204,7 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
                 }
             }
         } finally {
+            // 如果入队发生中断异常,则当前日志操作线程发生中断.
             if (interrupted) {
                 Thread.currentThread().interrupt();
             }
@@ -251,7 +267,6 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
      */
     @Override
     public void addAppender(Appender<E> newAppender) {
-        //
         if (appenderCount == 0) {
             appenderCount++;
             addInfo("Attaching appender named [" + newAppender.getName() + "] to AsyncAppender.");
@@ -292,6 +307,11 @@ public class AsyncAppenderBase<E> extends UnsynchronizedAppenderBase<E> implemen
         return aai.detachAppender(name);
     }
 
+
+    /**
+     * 日志刷盘工作线程.
+     * 从阻塞队列中拉取日志信息,然后异步刷入磁盘.
+     */
     class Worker extends Thread {
 
         @Override

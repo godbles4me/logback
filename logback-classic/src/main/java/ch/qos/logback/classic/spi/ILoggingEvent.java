@@ -49,6 +49,10 @@ public interface ILoggingEvent extends DeferredProcessingAware {
 
     Object[] getArgumentArray();
 
+    /**
+     * 获取格式化的日志消息
+     * @return
+     */
     String getFormattedMessage();
 
     String getLoggerName();

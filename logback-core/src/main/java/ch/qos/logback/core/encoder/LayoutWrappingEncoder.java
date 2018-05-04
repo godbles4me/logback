@@ -20,20 +20,26 @@ import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.OutputStreamAppender;
 
+/**
+ * LayoutWrappingEncoder包装器用户版本兼容.
+ * 在0.9.19版本以后, Encoder兼有了Layout的
+ * 部分功能,而只将日志事件格式转化工作交给了
+ * Layout.为了兼容之前版本的代码,需要将之前Layout
+ * 的部分功能包装为Encoder.
+ *
+ * @author Daniel Lea
+ */
 public class LayoutWrappingEncoder<E> extends EncoderBase<E> {
 
+    // 包装0.9.19版本之前的layout
     protected Layout<E> layout;
 
-    /**
-     * The charset to use when converting a String into bytes.
-     * <p/>
-     * By default this property has the value
-     * <code>null</null> which corresponds to
-     * the system's default charset.
-     */
+    // null使用系统默认字符集
     private Charset charset;
 
     Appender<?> parent;
+
+    // 如果immediateFlush为false,可以提高5倍日志吞吐量
     Boolean immediateFlush = null;
 
     public Layout<E> getLayout() {
@@ -48,16 +54,6 @@ public class LayoutWrappingEncoder<E> extends EncoderBase<E> {
         return charset;
     }
 
-    /**
-     * Set the charset to use when converting the string returned by the layout
-     * into bytes.
-     * <p/>
-     * By default this property has the value
-     * <code>null</null> which corresponds to
-     * the system's default charset.
-     *
-     * @param charset
-     */
     public void setCharset(Charset charset) {
         this.charset = charset;
     }
@@ -77,11 +73,14 @@ public class LayoutWrappingEncoder<E> extends EncoderBase<E> {
 
     @Override
     public byte[] headerBytes() {
-        if (layout == null)
+        if (layout == null) {
             return null;
+        }
 
         StringBuilder sb = new StringBuilder();
+        // 添加文件头部
         appendIfNotNull(sb, layout.getFileHeader());
+        // 添加表达式头部
         appendIfNotNull(sb, layout.getPresentationHeader());
         if (sb.length() > 0) {
             // If at least one of file header or presentation header were not
@@ -89,13 +88,15 @@ public class LayoutWrappingEncoder<E> extends EncoderBase<E> {
             // This should be useful in most cases and should not hurt.
             sb.append(CoreConstants.LINE_SEPARATOR);
         }
+
         return convertToBytes(sb.toString());
     }
 
     @Override
     public byte[] footerBytes() {
-        if (layout == null)
+        if (layout == null) {
             return null;
+        }
 
         StringBuilder sb = new StringBuilder();
         appendIfNotNull(sb, layout.getPresentationFooter());
@@ -103,6 +104,11 @@ public class LayoutWrappingEncoder<E> extends EncoderBase<E> {
         return convertToBytes(sb.toString());
     }
 
+    /**
+     * 转换字符串为字节数组
+     * @param s 字符串
+     * @return
+     */
     private byte[] convertToBytes(String s) {
         if (charset == null) {
             return s.getBytes();
@@ -111,15 +117,25 @@ public class LayoutWrappingEncoder<E> extends EncoderBase<E> {
         }
     }
 
+    /**
+     * encode具体实现Encoder两部分功能.
+     * @param event
+     * @return
+     */
+    @Override
     public byte[] encode(E event) {
+        // 借用layout转换事件为字符串功能
         String txt = layout.doLayout(event);
+        // 字符串转字节数组
         return convertToBytes(txt);
     }
 
+    @Override
     public boolean isStarted() {
         return false;
     }
 
+    @Override
     public void start() {
         if (immediateFlush != null) {
             if (parent instanceof OutputStreamAppender) {
@@ -134,12 +150,18 @@ public class LayoutWrappingEncoder<E> extends EncoderBase<E> {
         started = true;
     }
 
+    @Override
     public void stop() {
         started = false;
     }
 
+    /**
+     * 字符串非空则拼接
+     * @param sb
+     * @param s
+     */
     private void appendIfNotNull(StringBuilder sb, String s) {
-        if (s != null) {
+        if (null != s) {
             sb.append(s);
         }
     }

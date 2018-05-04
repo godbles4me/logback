@@ -15,6 +15,10 @@ package ch.qos.logback.classic.pattern;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
+/**
+ * 相对时间转换器(从程序启动到日志打印的时间,一般不建议使用)
+ * @author Daniel Lea
+ */
 public class RelativeTimeConverter extends ClassicConverter {
 
     long lastTimestamp = -1;

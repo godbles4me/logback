@@ -34,8 +34,8 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/ceki/logback</url>
-        <connection>git@github.com:ceki/logback.git</connection>
+        <url>https://github.com/godble4me/logbackx</url>
+        <connection>git@github.com:godble4me/logbackx.git</connection>
     </scm>
 
     <modules>

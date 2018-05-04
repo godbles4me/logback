@@ -33,6 +33,8 @@ abstract public class PatternLayoutBase<E> extends LayoutBase<E> {
     protected PostCompileProcessor<E> postCompileProcessor;
     
     Map<String, String> instanceConverterMap = new HashMap<String, String>();
+
+    /** 是否在日志文件开头打印模式(格式)信息 */
     protected boolean outputPatternAsHeader = false;
     
     /**

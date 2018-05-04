@@ -37,6 +37,7 @@ import ch.qos.logback.core.util.OptionHelper;
 
 public class ConsoleAppender<E> extends OutputStreamAppender<E> {
 
+    // 控制台目标
     protected ConsoleTarget target = ConsoleTarget.SystemOut;
     protected boolean withJansi = false;
 

@@ -16,14 +16,16 @@ package ch.qos.logback.classic.pattern;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 /**
- * Return the event's level.
+ * 返回事件级别.
  * 
  * @author Ceki G&uuml;lc&uuml;
+ * @author Daniel Lea
  */
 public class LevelConverter extends ClassicConverter {
 
     @Override
     public String convert(ILoggingEvent le) {
+        // 从日志事件中获取日志级别信息
         return le.getLevel().toString();
     }
 

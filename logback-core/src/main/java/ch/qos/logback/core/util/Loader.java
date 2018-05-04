@@ -141,14 +141,17 @@ public class Loader {
      * @return
      */
     public static ClassLoader getClassLoaderAsPrivileged(final Class<?> clazz) {
-        if (!HAS_GET_CLASS_LOADER_PERMISSION)
+        if (!HAS_GET_CLASS_LOADER_PERMISSION) {
             return null;
-        else
+        }
+        else {
             return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+                @Override
                 public ClassLoader run() {
                     return clazz.getClassLoader();
                 }
             });
+        }
     }
 
     /**

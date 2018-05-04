@@ -13,12 +13,16 @@
  */
 package ch.qos.logback.core.pattern;
 
+/**
+ * 格式化转换器
+ * @author Daniel Lea
+ */
 abstract public class FormattingConverter<E> extends Converter<E> {
 
-    static final int INITIAL_BUF_SIZE = 256;
-    static final int MAX_CAPACITY = 1024;
+    static final int        INITIAL_BUF_SIZE        = 256;
+    static final int        MAX_CAPACITY            = 1024;
 
-    FormatInfo formattingInfo;
+    FormatInfo              formattingInfo;
 
     final public FormatInfo getFormattingInfo() {
         return formattingInfo;
@@ -44,11 +48,13 @@ abstract public class FormattingConverter<E> extends Converter<E> {
         int max = formattingInfo.getMax();
 
         if (s == null) {
-            if (0 < min)
+            if (0 < min) {
                 SpacePadder.spacePad(buf, min);
+            }
             return;
         }
 
+        // 转换格式后的缓存日志字符串长度
         int len = s.length();
 
         if (len > max) {

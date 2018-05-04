@@ -21,16 +21,15 @@ import ch.qos.logback.core.spi.ContextAwareBase;
 import ch.qos.logback.core.spi.LifeCycle;
 import ch.qos.logback.core.status.Status;
 
-abstract public class DynamicConverter<E> extends FormattingConverter<E> implements LifeCycle, ContextAware {
+public abstract class DynamicConverter<E> extends FormattingConverter<E> implements LifeCycle, ContextAware {
+
 
     ContextAwareBase cab = new ContextAwareBase(this);
 
-    // Contains a list of option Strings.
+    // 选项列表
     private List<String> optionList;
 
-    /**
-     * Is this component active?
-     */
+    // 组件是否被激活
     protected boolean started = false;
 
     /**
@@ -62,7 +61,7 @@ abstract public class DynamicConverter<E> extends FormattingConverter<E> impleme
      * Return the first option passed to this component. The returned value may be
      * null if there are no options.
      * 
-     * @return First option, may be null.
+     * @return 第一个选项. 可能为null.
      */
     public String getFirstOption() {
         if (optionList == null || optionList.size() == 0) {

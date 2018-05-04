@@ -17,14 +17,17 @@ import ch.qos.logback.core.spi.ContextAware;
 import ch.qos.logback.core.spi.LifeCycle;
 
 /**
- * Encoders are responsible for transform an incoming event into a byte array
- * 
+ * Encoder接受Appender委托,需要完成以下两件事:
+ * 1. 转换输入事件(event)为字节数组
+ *      ==>  具体委托部分功能给Layout,由Layout将事件转成字符串,再由Encoder将字符串转成字节数组;
+ * 2. 将字节数组输出到指定目的地
+ *      ==> Encoder组件自己实现写磁盘功能.
+ *
  * @author Ceki G&uuml;lc&uuml;
  * @author Joern Huxhorn
  * @author Maarten Bosteels
- * 
- * @param <E>
- *          event type
+ * @author Daniel Lea
+ *
  * @since 0.9.19
  */
 public interface Encoder<E> extends ContextAware, LifeCycle {

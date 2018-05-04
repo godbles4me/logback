@@ -23,10 +23,10 @@ import ch.qos.logback.core.spi.PropertyContainer;
 import ch.qos.logback.core.status.StatusManager;
 
 /**
- * A context is the main anchorage point of all logback components.
+ * 上下文是所有logback组件的主要停泊点.
  * 
  * @author Ceki Gulcu
- * 
+ * @author Daniel Lea
  */
 public interface Context extends PropertyContainer {
 

@@ -20,11 +20,10 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 
 /**
- * An appender which calls logback recursively
+ * 递归调用logback的appender
  * 
  * @author Ralph Goers
  */
-
 public class LoggingAppender extends AppenderBase<ILoggingEvent> {
 
     Logger logger;

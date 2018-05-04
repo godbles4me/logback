@@ -15,18 +15,21 @@ package ch.qos.logback.core.encoder;
 
 import ch.qos.logback.core.spi.ContextAwareBase;
 
-abstract public class EncoderBase<E> extends ContextAwareBase implements Encoder<E> {
+public abstract class EncoderBase<E> extends ContextAwareBase implements Encoder<E> {
 
     protected boolean started;
 
+    @Override
     public boolean isStarted() {
         return started;
     }
 
+    @Override
     public void start() {
         started = true;
     }
 
+    @Override
     public void stop() {
         started = false;
     }

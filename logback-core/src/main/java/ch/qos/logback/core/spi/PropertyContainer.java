@@ -15,9 +15,22 @@ package ch.qos.logback.core.spi;
 
 import java.util.Map;
 
+/**
+ * 属性容器
+ * @author Daniel Lea
+ */
 public interface PropertyContainer {
 
-    String getProperty(String key);
+    /**
+     * 获取属性值
+     * @param key 属性键
+     * @return 属性值
+     */
+    String getProperty(final String key);
 
+    /**
+     * 获取属性K-V拷贝
+     * @return
+     */
     Map<String, String> getCopyOfPropertyMap();
 }

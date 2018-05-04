@@ -21,9 +21,14 @@ import javax.management.ObjectName;
 import javax.management.StandardMBean;
 import java.lang.management.ManagementFactory;
 
+/**
+ * 统计过滤器
+ * @author Daniel Lea
+ */
 public class CountingFilter extends Filter {
 
     long total = 0;
+    // 访问统计视图
     final StatisticalViewImpl accessStatsImpl;
 
     String domain = "ch.qos.logback.access";
@@ -47,8 +52,12 @@ public class CountingFilter extends Filter {
     public void start() {
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         try {
+            // 构造对象名称
             ObjectName on = new ObjectName(domain + ":Name=" + getName());
+            // 创建标准MBean
             StandardMBean mbean = new StandardMBean(accessStatsImpl, StatisticalView.class);
+
+            // 如果该对象名已注册,则重新注册
             if (mbs.isRegistered(on)) {
                 mbs.unregisterMBean(on);
             }

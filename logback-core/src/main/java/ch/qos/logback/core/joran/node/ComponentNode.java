@@ -13,6 +13,10 @@
  */
 package ch.qos.logback.core.joran.node;
 
+/**
+ * 组件节点
+ * @author Daniel Lea
+ */
 public class ComponentNode {
 
     String classStr;

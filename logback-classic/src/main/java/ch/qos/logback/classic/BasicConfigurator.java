@@ -27,18 +27,33 @@ import ch.qos.logback.core.spi.ContextAwareBase;
  *
  * 使用默认的console-appender,挂载在root节点下.
  *
+ * <pre>
+ *     <configuration>
+ *         <appender name="console", class="...ConsoleAppender">
+ *
+ *         </appender>
+ *     </configuration>
+ *
+ * </pre>
+ *
  * @author Ceki G&uuml;lc&uuml;
  */
 public class BasicConfigurator extends ContextAwareBase implements Configurator {
 
     public BasicConfigurator() {}
 
+    /**
+     *
+     * @param lc
+     */
     @Override
     public void configure(final LoggerContext lc) {
         addInfo("Setting up default configuration.");
         
         ConsoleAppender<ILoggingEvent> ca = new ConsoleAppender<ILoggingEvent>();
+        // 日志器上下文
         ca.setContext(lc);
+        // 日志器名称
         ca.setName("console");
         LayoutWrappingEncoder<ILoggingEvent> encoder = new LayoutWrappingEncoder<ILoggingEvent>();
         encoder.setContext(lc);

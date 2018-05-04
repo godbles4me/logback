@@ -18,6 +18,10 @@ import java.util.Map;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggerContextVO;
 
+/**
+ * 属性转换器
+ * @author Daniel Lea
+ */
 public final class PropertyConverter extends ClassicConverter {
 
     String key;

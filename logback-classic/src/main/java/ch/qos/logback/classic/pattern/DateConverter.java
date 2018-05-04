@@ -20,6 +20,10 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.util.CachingDateFormatter;
 
+/**
+ * 日期转换器
+ * @author Daniel Lea
+ */
 public class DateConverter extends ClassicConverter {
 
     long lastTimestamp = -1;

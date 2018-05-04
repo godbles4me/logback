@@ -29,12 +29,10 @@ import ch.qos.logback.core.util.FileSize;
 import ch.qos.logback.core.util.FileUtil;
 
 /**
- * FileAppender appends log events to a file.
- * 
- * For more information about this appender, please refer to the online manual
- * at http://logback.qos.ch/manual/appenders.html#FileAppender
+ * FileAppender打印日志到文件
  * 
  * @author Ceki G&uuml;lc&uuml;
+ * @author Daniel Lea
  */
 public class FileAppender<E> extends OutputStreamAppender<E> {
 

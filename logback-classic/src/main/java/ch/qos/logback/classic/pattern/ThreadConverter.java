@@ -16,9 +16,10 @@ package ch.qos.logback.classic.pattern;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 /**
- * Return the events thread (usually the current thread).
+ * 返回事件线程(一般为当前线程)
  * 
  * @author Ceki G&uuml;lc&uuml;
+ * @author Daniel Lea
  */
 public class ThreadConverter extends ClassicConverter {
 

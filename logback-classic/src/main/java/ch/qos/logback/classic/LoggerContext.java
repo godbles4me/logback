@@ -60,6 +60,7 @@ public class LoggerContext extends ContextBase implements ILoggerFactory, LifeCy
     // 日志容量
     private int size;
 
+    // 无appender定义警告计数器
     private int noAppenderWarning = 0;
     /** 日志上下文监听器列表 */
     private final List<LoggerContextListener> loggerContextListenerList = new ArrayList<>();
@@ -207,6 +208,10 @@ public class LoggerContext extends ContextBase implements ILoggerFactory, LifeCy
         return (Logger) loggerCache.get(name);
     }
 
+    /**
+     *
+     * @param logger
+     */
     final void noAppenderDefinedWarning(final Logger logger) {
         if (noAppenderWarning++ == 0) {
             getStatusManager().add(new WarnStatus("No appenders present in context [" + getName() + "] for logger [" + logger.getName() + "].", logger));

@@ -14,12 +14,12 @@
 package ch.qos.logback.core.pattern;
 
 /**
- * A minimal converter which sets up the general interface for derived classes. 
- * It also implements the functionality to chain converters in a linked list.
- * 
+ * Converter最小形式. 并以单向链表形式实现converter链功能.
+ *
  * @author ceki
+ * @author Daniel Lea
  */
-abstract public class Converter<E> {
+public abstract class Converter<E> {
 
     Converter<E> next;
 
@@ -35,15 +35,16 @@ abstract public class Converter<E> {
      * In its simplest incarnation, a convert simply appends the data extracted from
      * the event to the buffer passed as parameter.
      * 
-     * @param buf The input buffer where data is appended
+     * @param builder The input buffer where data is appended
      * @param event The event from where data is extracted
      */
-    public void write(StringBuilder buf, E event) {
-        buf.append(convert(event));
+    public void write(StringBuilder builder, E event) {
+        // 缓存转化后的日志事件字符串信息
+        builder.append(convert(event));
     }
 
     public final void setNext(Converter<E> next) {
-        if (this.next != null) {
+        if (null != this.next) {
             throw new IllegalStateException("Next converter has been already set");
         }
         this.next = next;

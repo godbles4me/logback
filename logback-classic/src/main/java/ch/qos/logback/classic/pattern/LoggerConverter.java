@@ -15,6 +15,11 @@ package ch.qos.logback.classic.pattern;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
+/**
+ * 日志转化器
+ *
+ * @author Daniel Lea
+ */
 public class LoggerConverter extends NamedConverter {
 
     @Override

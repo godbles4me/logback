@@ -22,7 +22,7 @@ import ch.qos.logback.core.pattern.DynamicConverter;
  *
  * 创建自定义格式转换符必须继承{@link ClassicConverter}
  * @author Ceki Gulcu
+ * @author Daniel Lea
  */
-abstract public class ClassicConverter extends DynamicConverter<ILoggingEvent> {
-
+public abstract class ClassicConverter extends DynamicConverter<ILoggingEvent> {
 }

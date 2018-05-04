@@ -28,9 +28,6 @@ import ch.qos.logback.core.status.ErrorStatus;
  * OutputStreamAppender appends events to a {@link OutputStream}. This class
  * provides basic services that other appenders build upon.
  * 
- * For more information about this appender, please refer to the online manual
- * at http://logback.qos.ch/manual/appenders.html#OutputStreamAppender
- * 
  * @author Ceki G&uuml;lc&uuml;
  */
 public class OutputStreamAppender<E> extends UnsynchronizedAppenderBase<E> {
@@ -46,11 +43,10 @@ public class OutputStreamAppender<E> extends UnsynchronizedAppenderBase<E> {
      */
     protected final ReentrantLock lock = new ReentrantLock(false);
 
-    /**
-     * This is the {@link OutputStream outputStream} where output will be written.
-     */
-    private OutputStream outputStream;
+    /** IO密集型操作对象不应频繁创建, 应实现对象复用. */
+    private volatile OutputStream outputStream;
 
+    // 是否立即刷新缓冲区(可配置)
     boolean immediateFlush = true;
 
     /**
@@ -66,6 +62,7 @@ public class OutputStreamAppender<E> extends UnsynchronizedAppenderBase<E> {
      * Checks that requires parameters are set and if everything is in order,
      * activates this appender.
      */
+    @Override
     public void start() {
         int errors = 0;
         if (this.encoder == null) {
@@ -83,22 +80,32 @@ public class OutputStreamAppender<E> extends UnsynchronizedAppenderBase<E> {
         }
     }
 
+    /**
+     * 设置编码器的布局
+     * @param layout
+     */
     public void setLayout(Layout<E> layout) {
         addWarn("This appender no longer admits a layout as a sub-component, set an encoder instead.");
         addWarn("To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.");
         addWarn("See also " + CODES_URL + "#layoutInsteadOfEncoder for details");
+        // 布局包装编码器
         LayoutWrappingEncoder<E> lwe = new LayoutWrappingEncoder<E>();
+        // 设置布局
         lwe.setLayout(layout);
+        // 设置编码器上下文
         lwe.setContext(context);
+
         this.encoder = lwe;
     }
 
     @Override
     protected void append(E eventObject) {
+        // 如果appender未激活,直接返回
         if (!isStarted()) {
             return;
         }
 
+        // 实际执行append逻辑
         subAppend(eventObject);
     }
 
@@ -109,10 +116,13 @@ public class OutputStreamAppender<E> extends UnsynchronizedAppenderBase<E> {
      * <p>
      * Stopped appenders cannot be reused.
      */
+    @Override
     public void stop() {
         lock.lock();
         try {
+            // 关闭输出流
             closeOutputStream();
+            // 暂停appender实例
             super.stop();
         } finally {
             lock.unlock();
@@ -134,6 +144,7 @@ public class OutputStreamAppender<E> extends UnsynchronizedAppenderBase<E> {
             }
         }
     }
+
 
     void encoderClose() {
         if (encoder != null && this.outputStream != null) {
@@ -185,18 +196,32 @@ public class OutputStreamAppender<E> extends UnsynchronizedAppenderBase<E> {
             }
         }
     }
+
+    /**
+     * 写编码格式化后的日志数据.
+     * @param event
+     * @throws IOException
+     */
     protected void writeOut(E event) throws IOException {
         byte[] byteArray = this.encoder.encode(event);
         writeBytes(byteArray);
     }
 
+    /**
+     * 写日志字节数据.
+     * @param byteArray
+     * @throws IOException
+     */
     private void writeBytes(byte[] byteArray) throws IOException {
-        if(byteArray == null || byteArray.length == 0)
+        if(byteArray == null || byteArray.length == 0) {
             return;
+        }
         
         lock.lock();
         try {
+            // 日志写
             this.outputStream.write(byteArray);
+            // 是否需要立即刷新缓冲区
             if (immediateFlush) {
                 this.outputStream.flush();
             }
@@ -206,11 +231,9 @@ public class OutputStreamAppender<E> extends UnsynchronizedAppenderBase<E> {
     }
 
     /**
-     * Actual writing occurs here.
-     * <p>
-     * Most subclasses of <code>WriterAppender</code> will need to override this
-     * method.
-     * 
+     * 实际日志写.
+     * 大多数WriterAppender的子类需要重写该方法.
+     *
      * @since 0.9.0
      */
     protected void subAppend(E event) {
